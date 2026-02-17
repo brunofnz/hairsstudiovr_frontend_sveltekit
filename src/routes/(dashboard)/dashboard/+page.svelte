@@ -87,30 +87,32 @@
 	{:else}
 		<div class="divide-y divide-blush-medium/30">
 			{#each data.todayAppointments as apt}
-				<a href="/appointments/{apt._id}" class="flex items-center justify-between px-5 py-4 hover:bg-blush/20 transition-colors">
-					<div class="flex items-center gap-4">
-						<div class="text-center min-w-[50px]">
-							<span class="text-lg font-heading font-bold text-teal-dark">{apt.time}</span>
+				<a href="/appointments/{apt._id}" class="block px-4 sm:px-5 py-4 hover:bg-blush/20 transition-colors">
+					<div class="flex items-start sm:items-center justify-between gap-3">
+						<div class="flex items-start sm:items-center gap-3 sm:gap-4 flex-1 min-w-0">
+							<div class="text-center min-w-[50px] shrink-0">
+								<span class="text-lg font-heading font-bold text-teal-dark">{apt.time}</span>
+							</div>
+							<div class="min-w-0">
+								<p class="font-body text-charcoal font-medium truncate">{apt.clients?.map((c: { name: string }) => c.name).join(', ') || 'Sin nombre'}</p>
+								<p class="text-sm text-gray-dark font-body truncate">
+									{apt.services.map((s: { name: string }) => s.name).join(' + ')}
+								</p>
+							</div>
 						</div>
-						<div>
-							<p class="font-body text-charcoal font-medium">{apt.clients?.map((c: { name: string }) => c.name).join(', ') || 'Sin nombre'}</p>
-							<p class="text-sm text-gray-dark font-body">
-								{apt.services.map((s: { name: string }) => s.name).join(' + ')}
-							</p>
-						</div>
-					</div>
-					<div class="flex items-center gap-2">
-						<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium font-body {STATUS_COLORS[apt.status as AppointmentStatus]}">
-							{STATUS_LABELS[apt.status as AppointmentStatus]}
-						</span>
-						{#if apt.paid}
-							<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium font-body bg-green-100 text-green-800">
-								Pagado
+						<div class="flex flex-col sm:flex-row items-end sm:items-center gap-1 sm:gap-2 shrink-0">
+							<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium font-body {STATUS_COLORS[apt.status as AppointmentStatus]}">
+								{STATUS_LABELS[apt.status as AppointmentStatus]}
 							</span>
-						{/if}
-						<span class="font-body font-bold text-teal-dark text-sm">
-							{formatCurrency(apt.totalPrice)}
-						</span>
+							{#if apt.paid}
+								<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium font-body bg-green-100 text-green-800">
+									Pagado
+								</span>
+							{/if}
+							<span class="font-body font-bold text-teal-dark text-sm">
+								{formatCurrency(apt.totalPrice)}
+							</span>
+						</div>
 					</div>
 				</a>
 			{/each}

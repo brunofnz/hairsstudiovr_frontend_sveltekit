@@ -37,7 +37,7 @@
 
 <button
 	{type}
-	{disabled}
+	disabled={disabled || loading}
 	{onclick}
 	class="inline-flex items-center justify-center gap-2 font-body font-semibold rounded-lg
 		   focus:outline-none focus:ring-2 focus:ring-offset-2

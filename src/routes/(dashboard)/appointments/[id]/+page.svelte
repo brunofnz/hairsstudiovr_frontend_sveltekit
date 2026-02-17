@@ -91,7 +91,7 @@
 	{/snippet}
 </PageHeader>
 
-<Card class="p-6 max-w-3xl">
+<Card class="p-4 sm:p-6 max-w-3xl">
 	<form onsubmit={handleSave} class="space-y-6">
 		<!-- Clients -->
 		<ClientPicker bind:clients={allClients} bind:selected={clientIds} />

@@ -1,11 +1,14 @@
 <script lang="ts">
 	import Sidebar from '$lib/components/layout/Sidebar.svelte';
 	import Header from '$lib/components/layout/Header.svelte';
+	import LoadingBar from '$lib/components/ui/LoadingBar.svelte';
 
 	let { data, children } = $props();
 
 	let sidebarOpen = $state(false);
 </script>
+
+<LoadingBar />
 
 <div class="min-h-screen bg-blush/30">
 	<Sidebar bind:open={sidebarOpen} role={data.user?.role || 'operador'} />

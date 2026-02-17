@@ -9,11 +9,11 @@
 </script>
 
 {#if $toasts.length > 0}
-	<div class="fixed top-4 right-4 z-[100] space-y-2 pointer-events-none">
+	<div class="fixed top-4 left-4 right-4 sm:left-auto sm:right-4 z-[100] space-y-2 pointer-events-none">
 		{#each $toasts as toast (toast.id)}
 			<div
 				class="pointer-events-auto px-4 py-3 rounded-lg border shadow-lg font-body text-sm
-					   max-w-sm transform transition-all duration-300 {typeStyles[toast.type]}"
+					   sm:max-w-sm transform transition-all duration-300 {typeStyles[toast.type]}"
 			>
 				<div class="flex items-center justify-between gap-3">
 					<span>{toast.message}</span>

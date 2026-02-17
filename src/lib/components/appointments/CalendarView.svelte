@@ -50,7 +50,7 @@
 
 			const dayAppts = appointments.filter((a) => {
 				const aDate = new Date(a.date);
-				return aDate.getFullYear() === year && aDate.getMonth() === month && aDate.getDate() === d;
+				return aDate.getUTCFullYear() === year && aDate.getUTCMonth() === month && aDate.getUTCDate() === d;
 			});
 
 			days.push({

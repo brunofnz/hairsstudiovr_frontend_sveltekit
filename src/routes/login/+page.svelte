@@ -39,13 +39,13 @@
 	<div class="w-full max-w-md">
 		<!-- Logo -->
 		<div class="text-center mb-8">
-			<h1 class="font-heading text-5xl font-bold text-charcoal tracking-tight">VR</h1>
+			<h1 class="font-heading text-4xl sm:text-5xl font-bold text-charcoal tracking-tight">VR</h1>
 			<p class="text-sm tracking-[0.3em] text-gray-dark mt-1 font-body uppercase">Hair Studio</p>
 			<div class="w-16 h-0.5 bg-teal mx-auto mt-3"></div>
 		</div>
 
 		<!-- Form Card -->
-		<div class="bg-white rounded-2xl shadow-lg p-8">
+		<div class="bg-white rounded-2xl shadow-lg p-6 sm:p-8">
 			<h2 class="font-heading text-2xl font-bold text-charcoal text-center mb-6">
 				Iniciar sesión
 			</h2>

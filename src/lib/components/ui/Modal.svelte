@@ -27,7 +27,7 @@
 <svelte:window onkeydown={handleKeydown} />
 
 {#if open}
-	<div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+	<div class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
 		<!-- Backdrop -->
 		<div
 			class="absolute inset-0 bg-black/50 transition-opacity"
@@ -42,8 +42,8 @@
 				   transform transition-all duration-200 max-h-[90vh] flex flex-col"
 		>
 			{#if title}
-				<div class="flex items-center justify-between px-6 py-4 border-b border-blush-medium/50">
-					<h2 class="font-heading text-xl font-bold text-charcoal">{title}</h2>
+				<div class="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-blush-medium/50">
+					<h2 class="font-heading text-lg sm:text-xl font-bold text-charcoal">{title}</h2>
 					<button
 						onclick={() => (open = false)}
 						class="p-1 rounded-lg text-gray-dark hover:bg-blush transition-colors cursor-pointer"
@@ -55,7 +55,7 @@
 				</div>
 			{/if}
 
-			<div class="px-6 py-4 overflow-y-auto">
+			<div class="px-4 sm:px-6 py-4 overflow-y-auto">
 				{@render children()}
 			</div>
 		</div>

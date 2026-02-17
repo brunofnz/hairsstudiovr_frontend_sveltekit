@@ -162,32 +162,64 @@
 		</p>
 	</Card>
 {:else}
-	<Card>
+	<!-- Mobile: Card layout -->
+	<div class="space-y-3 sm:hidden">
+		{#each filtered as user}
+			<Card class="p-4">
+				<div class="flex items-start justify-between">
+					<div class="flex-1 min-w-0">
+						<p class="font-body text-charcoal font-medium truncate">{user.name}</p>
+						<p class="text-sm text-gray-dark font-body mt-0.5">@{user.username}</p>
+						<div class="flex items-center gap-2 mt-2 flex-wrap">
+							<span
+								class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium font-body
+								{user.role === 'admin' ? 'bg-teal/10 text-teal-dark' : 'bg-blush text-gray-dark'}"
+							>
+								{user.role === 'admin' ? 'Admin' : 'Operador'}
+							</span>
+							<span
+								class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium font-body
+								{user.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}"
+							>
+								{user.isActive ? 'Activo' : 'Inactivo'}
+							</span>
+						</div>
+					</div>
+					<div class="flex items-center gap-1 ml-3 shrink-0">
+						<button
+							onclick={() => openEdit(user)}
+							class="p-2 text-gray-dark hover:text-teal hover:bg-blush rounded-lg transition-colors cursor-pointer"
+						>
+							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
+							</svg>
+						</button>
+						<button
+							onclick={() => openDelete(user._id)}
+							class="p-2 text-gray-dark hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+						>
+							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+							</svg>
+						</button>
+					</div>
+				</div>
+			</Card>
+		{/each}
+	</div>
+
+	<!-- Desktop: Table layout -->
+	<Card class="hidden sm:block">
 		<div class="overflow-x-auto">
 			<table class="w-full">
 				<thead>
 					<tr class="border-b border-blush-medium/50 bg-blush/30">
-						<th class="text-left px-5 py-3 text-sm font-semibold text-gray-dark font-body"
-							>Nombre</th
-						>
-						<th class="text-left px-5 py-3 text-sm font-semibold text-gray-dark font-body"
-							>Usuario</th
-						>
-						<th
-							class="text-left px-5 py-3 text-sm font-semibold text-gray-dark font-body hidden sm:table-cell"
-							>Rol</th
-						>
-						<th
-							class="text-left px-5 py-3 text-sm font-semibold text-gray-dark font-body hidden md:table-cell"
-							>Categorías</th
-						>
-						<th
-							class="text-left px-5 py-3 text-sm font-semibold text-gray-dark font-body hidden sm:table-cell"
-							>Estado</th
-						>
-						<th class="text-right px-5 py-3 text-sm font-semibold text-gray-dark font-body"
-							>Acciones</th
-						>
+						<th class="text-left px-5 py-3 text-sm font-semibold text-gray-dark font-body">Nombre</th>
+						<th class="text-left px-5 py-3 text-sm font-semibold text-gray-dark font-body">Usuario</th>
+						<th class="text-left px-5 py-3 text-sm font-semibold text-gray-dark font-body hidden md:table-cell">Rol</th>
+						<th class="text-left px-5 py-3 text-sm font-semibold text-gray-dark font-body hidden lg:table-cell">Categorías</th>
+						<th class="text-left px-5 py-3 text-sm font-semibold text-gray-dark font-body hidden md:table-cell">Estado</th>
+						<th class="text-right px-5 py-3 text-sm font-semibold text-gray-dark font-body">Acciones</th>
 					</tr>
 				</thead>
 				<tbody class="divide-y divide-blush-medium/30">
@@ -195,17 +227,15 @@
 						<tr class="hover:bg-blush/20 transition-colors">
 							<td class="px-5 py-3 font-body text-charcoal font-medium">{user.name}</td>
 							<td class="px-5 py-3 font-body text-gray-dark">{user.username}</td>
-							<td class="px-5 py-3 hidden sm:table-cell">
+							<td class="px-5 py-3 hidden md:table-cell">
 								<span
 									class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium font-body
-									{user.role === 'admin'
-										? 'bg-teal/10 text-teal-dark'
-										: 'bg-blush text-gray-dark'}"
+									{user.role === 'admin' ? 'bg-teal/10 text-teal-dark' : 'bg-blush text-gray-dark'}"
 								>
 									{user.role === 'admin' ? 'Admin' : 'Operador'}
 								</span>
 							</td>
-							<td class="px-5 py-3 font-body text-gray-dark text-sm hidden md:table-cell">
+							<td class="px-5 py-3 font-body text-gray-dark text-sm hidden lg:table-cell">
 								{#if user.role === 'operador' && user.categoryIds.length > 0}
 									{getCategoryNames(user.categoryIds)}
 								{:else if user.role === 'operador'}
@@ -214,12 +244,10 @@
 									<span class="text-gray-dark/40">—</span>
 								{/if}
 							</td>
-							<td class="px-5 py-3 hidden sm:table-cell">
+							<td class="px-5 py-3 hidden md:table-cell">
 								<span
 									class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium font-body
-									{user.isActive
-										? 'bg-green-100 text-green-700'
-										: 'bg-red-100 text-red-600'}"
+									{user.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}"
 								>
 									{user.isActive ? 'Activo' : 'Inactivo'}
 								</span>
@@ -230,36 +258,16 @@
 										onclick={() => openEdit(user)}
 										class="p-1.5 text-gray-dark hover:text-teal hover:bg-blush rounded-lg transition-colors cursor-pointer"
 									>
-										<svg
-											class="w-4 h-4"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-											stroke-width="1.5"
-										>
-											<path
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"
-											/>
+										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+											<path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
 										</svg>
 									</button>
 									<button
 										onclick={() => openDelete(user._id)}
 										class="p-1.5 text-gray-dark hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
 									>
-										<svg
-											class="w-4 h-4"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-											stroke-width="1.5"
-										>
-											<path
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-											/>
+										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+											<path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
 										</svg>
 									</button>
 								</div>
