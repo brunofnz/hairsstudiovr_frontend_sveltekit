@@ -201,68 +201,69 @@
 								</div>
 							</div>
 							<div class="flex items-center justify-between sm:justify-end gap-3">
-								<span class="font-body font-bold text-teal-dark">
+								<span class="font-body text-lg font-bold text-teal-dark">
 									{formatCurrency(apt.totalPrice)}
 								</span>
-								<div class="flex items-center gap-1" class:opacity-50={actionLoading === apt._id}>
-									{#if apt.status === 'pendiente'}
-										<button
-											onclick={() => updateStatus(apt._id, 'confirmado')}
-											disabled={actionLoading !== null}
-											class="p-2 sm:p-1.5 text-teal hover:bg-teal/10 rounded-lg transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-											title="Confirmar"
-										>
-											<svg class="w-5 h-5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-												<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-											</svg>
-										</button>
-									{/if}
-									{#if apt.status === 'confirmado'}
-										<button
-											onclick={() => updateStatus(apt._id, 'completado')}
-											disabled={actionLoading !== null}
-											class="p-2 sm:p-1.5 text-green-600 hover:bg-green-50 rounded-lg transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-											title="Completar"
-										>
-											<svg class="w-5 h-5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-												<path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-											</svg>
-										</button>
-									{/if}
-									{#if apt.status === 'completado' && !apt.paid}
-										<button
-											onclick={() => togglePaid(apt._id, apt.paid)}
-											disabled={actionLoading !== null}
-											class="p-2 sm:p-1.5 text-amber-600 hover:bg-amber-50 rounded-lg transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-											title="Marcar como pagado"
-										>
-											<svg class="w-5 h-5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-												<path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33" />
-											</svg>
-										</button>
-									{/if}
-									{#if apt.paid}
-										<button
-											onclick={() => togglePaid(apt._id, apt.paid)}
-											disabled={actionLoading !== null}
-											class="p-2 sm:p-1.5 text-green-600 hover:bg-green-50 rounded-lg transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-											title="Desmarcar pago"
-										>
-											<svg class="w-5 h-5 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 24 24">
-												<path d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33" />
-											</svg>
-										</button>
-									{/if}
-									<a
-										href="/appointments/{apt._id}"
-										class="p-2 sm:p-1.5 text-gray-dark hover:text-teal hover:bg-blush rounded-lg transition-colors"
-										aria-label="Editar turno"
+							</div>
+							<!-- Action buttons -->
+							<div class="flex items-center gap-2 mt-3 pt-3 border-t border-blush-medium/30 flex-wrap" class:opacity-50={actionLoading === apt._id}>
+								{#if apt.status === 'pendiente'}
+									<button
+										onclick={() => updateStatus(apt._id, 'confirmado')}
+										disabled={actionLoading !== null}
+										class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-body font-medium text-teal bg-teal/10 hover:bg-teal/20 rounded-lg transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
 									>
-										<svg class="w-5 h-5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
-											<path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
+										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+											<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
 										</svg>
-									</a>
-								</div>
+										Confirmar
+									</button>
+								{/if}
+								{#if apt.status === 'confirmado'}
+									<button
+										onclick={() => updateStatus(apt._id, 'completado')}
+										disabled={actionLoading !== null}
+										class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-body font-medium text-green-700 bg-green-50 hover:bg-green-100 rounded-lg transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+									>
+										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+											<path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+										</svg>
+										Completar
+									</button>
+								{/if}
+								{#if apt.status === 'completado' && !apt.paid}
+									<button
+										onclick={() => togglePaid(apt._id, apt.paid)}
+										disabled={actionLoading !== null}
+										class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-body font-medium text-amber-700 bg-amber-50 hover:bg-amber-100 rounded-lg transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+									>
+										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+											<path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33" />
+										</svg>
+										Cobrar
+									</button>
+								{/if}
+								{#if apt.paid}
+									<button
+										onclick={() => togglePaid(apt._id, apt.paid)}
+										disabled={actionLoading !== null}
+										class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-body font-medium text-green-700 bg-green-50 hover:bg-green-100 rounded-lg transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+									>
+										<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+											<path d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33" />
+										</svg>
+										Pagado
+									</button>
+								{/if}
+								<a
+									href="/appointments/{apt._id}"
+									class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-body font-medium text-gray-dark bg-blush hover:bg-blush-medium rounded-lg transition-colors"
+								>
+									<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+										<path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
+									</svg>
+									Editar
+								</a>
 							</div>
 						</div>
 					</Card>
