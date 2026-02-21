@@ -23,3 +23,17 @@ export function formatTime(time: string): string {
 export function formatDateTime(date: string | Date, time: string): string {
 	return `${formatDate(date)} ${time}`;
 }
+
+export function formatBirthday(date: string | Date): string {
+	return new Intl.DateTimeFormat('es-AR', {
+		day: 'numeric',
+		month: 'long',
+		timeZone: 'UTC'
+	}).format(new Date(date));
+}
+
+export function calculateAge(birthDate: string | Date, referenceDate?: Date): number {
+	const bd = new Date(birthDate);
+	const ref = referenceDate || new Date();
+	return ref.getFullYear() - bd.getUTCFullYear();
+}

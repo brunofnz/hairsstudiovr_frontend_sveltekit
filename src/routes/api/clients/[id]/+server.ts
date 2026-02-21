@@ -21,6 +21,9 @@ export const PUT: RequestHandler = async ({ params, request, locals }) => {
 	if (err) return err;
 
 	const body = await request.json();
+	if (body.birthDate !== undefined) {
+		body.birthDate = body.birthDate ? new Date(body.birthDate) : null;
+	}
 	await connectDB();
 
 	const client = await ClientModel.findByIdAndUpdate(params.id, body, { new: true }).lean();

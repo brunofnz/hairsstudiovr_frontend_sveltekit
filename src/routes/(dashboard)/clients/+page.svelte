@@ -2,6 +2,7 @@
 	import { invalidateAll, goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { api } from '$lib/utils/api';
+	import { formatBirthday } from '$lib/utils/format';
 	import { addToast } from '$lib/stores/toast';
 	import PageHeader from '$lib/components/layout/PageHeader.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
@@ -22,7 +23,7 @@
 	let search = $state(data.search || '');
 	let searchTimer: ReturnType<typeof setTimeout>;
 
-	let form = $state({ name: '', phone: '', email: '', notes: '' });
+	let form = $state({ name: '', phone: '', email: '', notes: '', birthDate: '' });
 
 	function handleSearch() {
 		clearTimeout(searchTimer);
@@ -39,14 +40,20 @@
 	}
 
 	function openCreate() {
-		form = { name: '', phone: '', email: '', notes: '' };
+		form = { name: '', phone: '', email: '', notes: '', birthDate: '' };
 		editing = false;
 		editId = '';
 		modalOpen = true;
 	}
 
 	function openEdit(client: typeof data.clients[0]) {
-		form = { name: client.name, phone: client.phone, email: client.email, notes: client.notes };
+		form = {
+			name: client.name,
+			phone: client.phone,
+			email: client.email,
+			notes: client.notes,
+			birthDate: client.birthDate ? client.birthDate.slice(0, 10) : ''
+		};
 		editing = true;
 		editId = client._id;
 		modalOpen = true;
@@ -62,17 +69,18 @@
 		loading = true;
 
 		try {
+			const payload = { ...form, birthDate: form.birthDate || null };
 			if (editing) {
 				const res = await api(`/clients/${editId}`, {
 					method: 'PUT',
-					body: JSON.stringify(form)
+					body: JSON.stringify(payload)
 				});
 				if (res.success) addToast('Cliente actualizado');
 				else addToast(res.error || 'Error al actualizar', 'error');
 			} else {
 				const res = await api('/clients', {
 					method: 'POST',
-					body: JSON.stringify(form)
+					body: JSON.stringify(payload)
 				});
 				if (res.success) addToast('Cliente creado');
 				else addToast(res.error || 'Error al crear', 'error');
@@ -138,6 +146,9 @@
 						{#if client.email}
 							<p class="text-xs text-gray-dark/60 font-body mt-0.5 truncate">{client.email}</p>
 						{/if}
+						{#if client.birthDate}
+							<p class="text-xs text-gray-dark/60 font-body mt-0.5">🎂 {formatBirthday(client.birthDate)}</p>
+						{/if}
 					</div>
 					<div class="flex items-center gap-1 ml-3 shrink-0">
 						<button
@@ -171,6 +182,7 @@
 						<th class="text-left px-5 py-3 text-sm font-semibold text-gray-dark font-body">Nombre</th>
 						<th class="text-left px-5 py-3 text-sm font-semibold text-gray-dark font-body">Teléfono</th>
 						<th class="text-left px-5 py-3 text-sm font-semibold text-gray-dark font-body hidden md:table-cell">Email</th>
+						<th class="text-left px-5 py-3 text-sm font-semibold text-gray-dark font-body hidden lg:table-cell">Cumpleaños</th>
 						<th class="text-right px-5 py-3 text-sm font-semibold text-gray-dark font-body">Acciones</th>
 					</tr>
 				</thead>
@@ -184,6 +196,9 @@
 							</td>
 							<td class="px-5 py-3 font-body text-gray-dark">{client.phone}</td>
 							<td class="px-5 py-3 font-body text-gray-dark hidden md:table-cell">{client.email || '—'}</td>
+							<td class="px-5 py-3 font-body text-gray-dark hidden lg:table-cell">
+								{client.birthDate ? formatBirthday(client.birthDate) : '—'}
+							</td>
 							<td class="px-5 py-3">
 								<div class="flex items-center justify-end gap-1">
 									<button
@@ -224,6 +239,7 @@
 		<Input label="Nombre" bind:value={form.name} required placeholder="Nombre completo" />
 		<Input label="Teléfono" bind:value={form.phone} required placeholder="Ej: 1155551234" />
 		<Input label="Email" type="email" bind:value={form.email} placeholder="Opcional" />
+		<Input label="Fecha de nacimiento" type="date" bind:value={form.birthDate} />
 		<Input label="Notas" bind:value={form.notes} placeholder="Observaciones..." />
 
 		<div class="flex justify-end gap-3 pt-2">

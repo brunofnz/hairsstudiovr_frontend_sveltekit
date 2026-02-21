@@ -30,7 +30,8 @@ export const load: PageServerLoad = async ({ url }) => {
 	return {
 		clients: clients.map((c) => ({
 			...c,
-			_id: c._id.toString()
+			_id: c._id.toString(),
+			birthDate: c.birthDate instanceof Date ? c.birthDate.toISOString() : (c.birthDate || null)
 		})),
 		pagination: { page, totalPages: Math.ceil(total / PER_PAGE), total },
 		search

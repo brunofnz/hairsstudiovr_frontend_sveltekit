@@ -7,12 +7,14 @@
 		appointments = [],
 		currentDate = $bindable(new Date()),
 		selectedDate = null,
-		onDateSelect
+		onDateSelect,
+		birthdayDays = []
 	}: {
 		appointments?: Appointment[];
 		currentDate?: Date;
 		selectedDate?: Date | null;
 		onDateSelect?: (date: Date) => void;
+		birthdayDays?: number[];
 	} = $props();
 
 	const DAYS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
@@ -30,11 +32,11 @@
 		if (startDay < 0) startDay = 6;
 
 		const daysInMonth = new Date(year, month + 1, 0).getDate();
-		const days: Array<{ date: number; isToday: boolean; isSelected: boolean; appointmentCount: number; hasConfirmed: boolean }> = [];
+		const days: Array<{ date: number; isToday: boolean; isSelected: boolean; appointmentCount: number; hasConfirmed: boolean; hasBirthday: boolean }> = [];
 
 		// Empty slots before first day
 		for (let i = 0; i < startDay; i++) {
-			days.push({ date: 0, isToday: false, isSelected: false, appointmentCount: 0, hasConfirmed: false });
+			days.push({ date: 0, isToday: false, isSelected: false, appointmentCount: 0, hasConfirmed: false, hasBirthday: false });
 		}
 
 		const today = new Date();
@@ -58,7 +60,8 @@
 				isToday,
 				isSelected,
 				appointmentCount: dayAppts.length,
-				hasConfirmed: dayAppts.some((a) => a.status === 'confirmado' || a.status === 'pendiente')
+				hasConfirmed: dayAppts.some((a) => a.status === 'confirmado' || a.status === 'pendiente'),
+				hasBirthday: birthdayDays.includes(d)
 			});
 		}
 
@@ -119,7 +122,8 @@
 					onclick={() => selectDate(day.date)}
 					class="h-16 sm:h-20 p-1 border-r border-b border-blush-medium/20 relative
 						   hover:bg-blush/30 transition-colors cursor-pointer
-						   {day.isSelected ? 'bg-blush-medium/40' : day.isToday ? 'bg-teal-light/20' : ''}"
+						   {day.isSelected ? 'bg-blush-medium/40' : day.isToday ? 'bg-teal-light/20' : ''}
+						   {day.hasBirthday && !day.isSelected ? 'ring-1 ring-inset ring-pink-300' : ''}"
 				>
 					<span
 						class="text-sm font-body
@@ -129,14 +133,21 @@
 					>
 						{day.date}
 					</span>
-					{#if day.appointmentCount > 0}
-						<div class="mt-1 flex justify-center">
-							<span
-								class="text-[10px] font-body rounded-full px-1.5 py-0.5
-									   {day.hasConfirmed ? 'bg-teal/20 text-teal-dark' : 'bg-blush-medium/50 text-gray-dark'}"
-							>
-								{day.appointmentCount}
-							</span>
+					{#if day.appointmentCount > 0 || day.hasBirthday}
+						<div class="mt-1 flex justify-center gap-0.5">
+							{#if day.appointmentCount > 0}
+								<span
+									class="text-[10px] font-body rounded-full px-1.5 py-0.5
+										   {day.hasConfirmed ? 'bg-teal/20 text-teal-dark' : 'bg-blush-medium/50 text-gray-dark'}"
+								>
+									{day.appointmentCount}
+								</span>
+							{/if}
+							{#if day.hasBirthday}
+								<span class="text-[10px] font-body rounded-full px-1 py-0.5 bg-pink-100 text-pink-600">
+									🎂
+								</span>
+							{/if}
 						</div>
 					{/if}
 				</button>

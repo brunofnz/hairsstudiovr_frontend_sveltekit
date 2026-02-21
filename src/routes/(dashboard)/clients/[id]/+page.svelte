@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { formatCurrency, formatDate } from '$lib/utils/format';
+	import { formatCurrency, formatDate, formatBirthday } from '$lib/utils/format';
 	import { STATUS_LABELS, STATUS_COLORS, PAYMENT_LABELS } from '$lib/utils/constants';
 	import PageHeader from '$lib/components/layout/PageHeader.svelte';
 	import Card from '$lib/components/ui/Card.svelte';
@@ -35,6 +35,12 @@
 				<div>
 					<span class="text-gray-dark">Email:</span>
 					<span class="text-charcoal ml-2">{data.client.email}</span>
+				</div>
+			{/if}
+			{#if data.client.birthDate}
+				<div>
+					<span class="text-gray-dark">Cumpleaños:</span>
+					<span class="text-charcoal ml-2">{formatBirthday(data.client.birthDate)}</span>
 				</div>
 			{/if}
 			{#if data.client.notes}

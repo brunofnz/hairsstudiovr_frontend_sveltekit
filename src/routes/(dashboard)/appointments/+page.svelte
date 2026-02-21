@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation';
-	import { formatCurrency, formatDate } from '$lib/utils/format';
+	import { formatCurrency, formatDate, formatBirthday, calculateAge } from '$lib/utils/format';
 	import { STATUS_LABELS, STATUS_COLORS, PAYMENT_LABELS, APPOINTMENT_STATUSES } from '$lib/utils/constants';
 	import { api } from '$lib/utils/api';
 	import { addToast } from '$lib/stores/toast';
@@ -18,6 +18,59 @@
 	let selectedDate = $state<Date | null>(null);
 	let statusFilter = $state('');
 	let actionLoading = $state<string | null>(null);
+
+	type BClient = { _id: string; name: string; phone: string; birthDate: string; birthDay: number };
+
+	// Birthday days for the currently displayed month (for calendar indicators)
+	const birthdayDays = $derived(() => {
+		const displayMonth = currentDate.getMonth();
+		return (data.birthdayClients || [])
+			.filter((c: BClient) => new Date(c.birthDate).getUTCMonth() === displayMonth)
+			.map((c: BClient) => new Date(c.birthDate).getUTCDate());
+	});
+
+	// Today's birthdays
+	const todayBirthdays = $derived(() => {
+		const today = new Date();
+		const todayDay = today.getDate();
+		const todayMonth = today.getMonth();
+		return (data.birthdayClients || []).filter((c: BClient) => {
+			const bd = new Date(c.birthDate);
+			return bd.getUTCDate() === todayDay && bd.getUTCMonth() === todayMonth;
+		});
+	});
+
+	// Selected day's birthdays
+	const selectedDayBirthdays = $derived(() => {
+		if (!selectedDate) return [];
+		const selDay = selectedDate.getDate();
+		const selMonth = selectedDate.getMonth();
+		return (data.birthdayClients || []).filter((c: BClient) => {
+			const bd = new Date(c.birthDate);
+			return bd.getUTCDate() === selDay && bd.getUTCMonth() === selMonth;
+		});
+	});
+
+	// All birthdays for the displayed month (sorted by day, excluding today to avoid duplicates)
+	const monthBirthdays = $derived(() => {
+		const displayMonth = currentDate.getMonth();
+		const today = new Date();
+		const todayDay = today.getDate();
+		const todayMonth = today.getMonth();
+		return (data.birthdayClients || [])
+			.filter((c: BClient) => {
+				const bd = new Date(c.birthDate);
+				const bdMonth = bd.getUTCMonth();
+				const bdDay = bd.getUTCDate();
+				// Include all from the month, but exclude today's (shown separately)
+				return bdMonth === displayMonth && !(bdMonth === todayMonth && bdDay === todayDay);
+			})
+			.sort((a: BClient, b: BClient) => new Date(a.birthDate).getUTCDate() - new Date(b.birthDate).getUTCDate());
+	});
+
+	const hasBirthdays = $derived(
+		todayBirthdays().length > 0 || monthBirthdays().length > 0
+	);
 
 	const filteredAppointments = $derived(() => {
 		let appts = data.appointments;
@@ -128,12 +181,61 @@
 				bind:currentDate
 				{selectedDate}
 				onDateSelect={handleDateSelect}
+				birthdayDays={birthdayDays()}
 			/>
 		</div>
 	{/if}
 
 	<!-- Appointments list -->
 	<div class="{view === 'calendar' ? 'lg:col-span-2' : 'lg:col-span-3'}">
+		<!-- Birthday reminders -->
+		{#if hasBirthdays || selectedDayBirthdays().length > 0}
+			<Card class="mb-4">
+				<div class="px-4 py-3 border-b border-blush-medium/30 flex items-center gap-2">
+					<span class="text-lg">🎂</span>
+					<h3 class="font-heading text-sm font-bold text-charcoal">Cumpleaños</h3>
+				</div>
+
+				{#if todayBirthdays().length > 0}
+					<div class="px-4 py-2.5 bg-blush/40 border-b border-blush-medium/30">
+						<p class="font-body text-xs font-semibold text-teal-dark mb-1">Hoy cumplen años:</p>
+						{#each todayBirthdays() as client}
+							<a href="/clients/{client._id}" class="flex items-center justify-between py-1 hover:text-teal transition-colors">
+								<span class="font-body text-sm text-charcoal font-medium">{client.name} <span class="text-xs text-gray-dark font-normal">cumple {calculateAge(client.birthDate)} años</span></span>
+								<span class="text-xs text-gray-dark font-body">{client.phone}</span>
+							</a>
+						{/each}
+					</div>
+				{/if}
+
+				{#if selectedDate && selectedDayBirthdays().length > 0}
+					<div class="px-4 py-2.5 bg-teal-light/10 border-b border-blush-medium/30">
+						<p class="font-body text-xs font-semibold text-teal-dark mb-1">
+							Cumpleaños el {formatDate(selectedDate)}:
+						</p>
+						{#each selectedDayBirthdays() as client}
+							<a href="/clients/{client._id}" class="flex items-center justify-between py-1 hover:text-teal transition-colors">
+								<span class="font-body text-sm text-charcoal font-medium">{client.name} <span class="text-xs text-gray-dark font-normal">cumple {calculateAge(client.birthDate)} años</span></span>
+								<span class="text-xs text-gray-dark font-body">{client.phone}</span>
+							</a>
+						{/each}
+					</div>
+				{/if}
+
+				{#if monthBirthdays().length > 0}
+					<div class="px-4 py-2.5">
+						<p class="font-body text-xs font-semibold text-gray-dark mb-1">Próximos este mes:</p>
+						{#each monthBirthdays() as client}
+							<a href="/clients/{client._id}" class="flex items-center justify-between py-1 hover:text-teal transition-colors">
+								<span class="font-body text-sm text-charcoal">{client.name} <span class="text-xs text-gray-dark">({calculateAge(client.birthDate)} años)</span></span>
+								<span class="text-xs text-gray-dark font-body">{formatBirthday(client.birthDate)}</span>
+							</a>
+						{/each}
+					</div>
+				{/if}
+			</Card>
+		{/if}
+
 		<!-- Status filter -->
 		<div class="flex items-center gap-1.5 sm:gap-2 mb-4 flex-wrap">
 			<button

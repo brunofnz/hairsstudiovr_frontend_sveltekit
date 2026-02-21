@@ -13,8 +13,10 @@ export const load: PageServerLoad = async () => {
 	tomorrow.setDate(tomorrow.getDate() + 1);
 
 	const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+	const todayMonth = today.getMonth() + 1; // MongoDB $month is 1-based
+	const todayDay = today.getDate();
 
-	const [todayCount, totalClients, totalServices, monthlyRevenue, todayAppointments] =
+	const [todayCount, totalClients, totalServices, monthlyRevenue, todayAppointments, todayBirthdays, monthBirthdays] =
 		await Promise.all([
 			AppointmentModel.countDocuments({
 				date: { $gte: today, $lt: tomorrow },
@@ -38,8 +40,35 @@ export const load: PageServerLoad = async () => {
 			})
 				.populate('clientIds', 'name phone')
 				.sort({ time: 1 })
-				.lean()
+				.lean(),
+			// Today's birthdays
+			ClientModel.find({
+				birthDate: { $ne: null },
+				$expr: {
+					$and: [
+						{ $eq: [{ $month: '$birthDate' }, todayMonth] },
+						{ $eq: [{ $dayOfMonth: '$birthDate' }, todayDay] }
+					]
+				}
+			}).select('name phone birthDate').lean(),
+			// This month's birthdays (excluding today)
+			ClientModel.find({
+				birthDate: { $ne: null },
+				$expr: {
+					$and: [
+						{ $eq: [{ $month: '$birthDate' }, todayMonth] },
+						{ $ne: [{ $dayOfMonth: '$birthDate' }, todayDay] }
+					]
+				}
+			}).select('name phone birthDate').lean()
 		]);
+
+	// Sort month birthdays by upcoming day
+	const sortedMonthBirthdays = [...monthBirthdays].sort((a, b) => {
+		const dayA = new Date(a.birthDate!).getUTCDate();
+		const dayB = new Date(b.birthDate!).getUTCDate();
+		return dayA - dayB;
+	});
 
 	return {
 		stats: {
@@ -48,6 +77,20 @@ export const load: PageServerLoad = async () => {
 			totalServices,
 			monthlyRevenue: monthlyRevenue[0]?.total || 0
 		},
+		todayBirthdays: todayBirthdays.map((c) => ({
+			_id: c._id.toString(),
+			name: c.name as string,
+			phone: c.phone as string,
+			birthDate: (c.birthDate instanceof Date ? c.birthDate.toISOString() : c.birthDate) as string,
+			birthDay: new Date(c.birthDate!).getUTCDate()
+		})),
+		monthBirthdays: sortedMonthBirthdays.map((c) => ({
+			_id: c._id.toString(),
+			name: c.name as string,
+			phone: c.phone as string,
+			birthDate: (c.birthDate instanceof Date ? c.birthDate.toISOString() : c.birthDate) as string,
+			birthDay: new Date(c.birthDate!).getUTCDate()
+		})),
 		todayAppointments: todayAppointments.map((a) => ({
 			...a,
 			_id: a._id.toString(),

@@ -80,6 +80,7 @@
 					phone: res.data.phone,
 					email: res.data.email || '',
 					notes: res.data.notes || '',
+					birthDate: res.data.birthDate || null,
 					createdAt: res.data.createdAt || '',
 					updatedAt: res.data.updatedAt || ''
 				};

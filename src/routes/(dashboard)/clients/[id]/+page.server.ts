@@ -15,7 +15,11 @@ export const load: PageServerLoad = async ({ params }) => {
 		.lean();
 
 	return {
-		client: { ...client, _id: client._id.toString() },
+		client: {
+			...client,
+			_id: client._id.toString(),
+			birthDate: client.birthDate instanceof Date ? client.birthDate.toISOString() : (client.birthDate || null)
+		},
 		appointments: appointments.map((a) => ({
 			...a,
 			_id: a._id.toString(),

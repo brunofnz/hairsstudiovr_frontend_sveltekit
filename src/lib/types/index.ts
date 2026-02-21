@@ -38,8 +38,17 @@ export interface Client {
 	phone: string;
 	email: string;
 	notes: string;
+	birthDate: string | null;
 	createdAt: string;
 	updatedAt: string;
+}
+
+export interface BirthdayClient {
+	_id: string;
+	name: string;
+	phone: string;
+	birthDate: string;
+	birthDay: number;
 }
 
 export interface AppointmentService {

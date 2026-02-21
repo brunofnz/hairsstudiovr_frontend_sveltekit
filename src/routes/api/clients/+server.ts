@@ -32,7 +32,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 	if (err) return err;
 
 	const body = await request.json();
-	const { name, phone, email, notes } = body;
+	const { name, phone, email, notes, birthDate } = body;
 
 	if (!name || !phone) {
 		return json({ success: false, error: 'Nombre y teléfono son requeridos' }, { status: 400 });
@@ -49,7 +49,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		name,
 		phone,
 		email: email || '',
-		notes: notes || ''
+		notes: notes || '',
+		birthDate: birthDate ? new Date(birthDate) : null
 	});
 
 	return json({ success: true, data: client }, { status: 201 });

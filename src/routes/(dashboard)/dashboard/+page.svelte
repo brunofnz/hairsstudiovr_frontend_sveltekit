@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { formatCurrency, formatDate } from '$lib/utils/format';
+	import { formatCurrency, formatDate, formatBirthday, calculateAge } from '$lib/utils/format';
 	import { STATUS_LABELS, STATUS_COLORS, PAYMENT_LABELS } from '$lib/utils/constants';
 	import type { AppointmentStatus, PaymentMethod } from '$lib/types';
 	import PageHeader from '$lib/components/layout/PageHeader.svelte';
@@ -67,6 +67,46 @@
 	<Button variant="secondary" onclick={() => window.location.href = '/clients'}>Ver clientes</Button>
 	<Button variant="secondary" onclick={() => window.location.href = '/services'}>Ver servicios</Button>
 </div>
+
+<!-- Birthday Reminders -->
+{#if data.todayBirthdays.length > 0 || data.monthBirthdays.length > 0}
+	<Card class="mb-8">
+		<div class="px-5 py-4 border-b border-blush-medium/30 flex items-center gap-3">
+			<div class="p-2 rounded-lg bg-blush text-charcoal">
+				<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M12 8.25v-1.5m0 1.5c-1.355 0-2.697.056-4.024.166C6.845 8.51 6 9.473 6 10.608v2.513m6-4.871c1.355 0 2.697.056 4.024.166C17.155 8.51 18 9.473 18 10.608v2.513M15 8.25v-1.5m-6 1.5v-1.5m12 9.75l-1.5.75a3.354 3.354 0 01-3 0 3.354 3.354 0 00-3 0 3.354 3.354 0 01-3 0 3.354 3.354 0 00-3 0 3.354 3.354 0 01-3 0L3 16.5m15-3.379a48.474 48.474 0 00-6-.371c-2.032 0-4.034.126-6 .371m12 0c.39.049.777.102 1.163.16 1.07.16 1.837 1.094 1.837 2.175v5.169c0 .621-.504 1.125-1.125 1.125H4.125A1.125 1.125 0 013 20.625v-5.17c0-1.08.768-2.014 1.837-2.174A47.78 47.78 0 016 13.12M12 8.25c.972 0 1.942.032 2.906.093M12 8.25a49.372 49.372 0 00-2.906.093" />
+				</svg>
+			</div>
+			<h2 class="font-heading text-lg font-bold text-charcoal">Cumpleaños</h2>
+		</div>
+
+		{#if data.todayBirthdays.length > 0}
+			<div class="px-5 py-3 bg-blush/40 border-b border-blush-medium/30">
+				<p class="font-body text-sm font-semibold text-teal-dark mb-2">Hoy cumplen años:</p>
+				{#each data.todayBirthdays as client}
+					<a href="/clients/{client._id}"
+					   class="flex items-center justify-between py-1.5 hover:text-teal transition-colors">
+						<span class="font-body text-charcoal font-medium">{client.name} <span class="text-xs text-gray-dark font-normal">cumple {calculateAge(client.birthDate)} años</span></span>
+						<span class="text-xs text-gray-dark font-body">{client.phone}</span>
+					</a>
+				{/each}
+			</div>
+		{/if}
+
+		{#if data.monthBirthdays.length > 0}
+			<div class="px-5 py-3">
+				<p class="font-body text-sm font-semibold text-gray-dark mb-2">Próximos este mes:</p>
+				{#each data.monthBirthdays as client}
+					<a href="/clients/{client._id}"
+					   class="flex items-center justify-between py-1.5 hover:text-teal transition-colors">
+						<span class="font-body text-sm text-charcoal">{client.name} <span class="text-xs text-gray-dark">({calculateAge(client.birthDate)} años)</span></span>
+						<span class="text-xs text-gray-dark font-body">{formatBirthday(client.birthDate)}</span>
+					</a>
+				{/each}
+			</div>
+		{/if}
+	</Card>
+{/if}
 
 <!-- Today's Appointments -->
 <Card>
